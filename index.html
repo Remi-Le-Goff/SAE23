@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Météo par Code Postal - V2</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.3/leaflet.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.3/leaflet.js"></script>
+    <script src="page.js" defer></script>
+</head>
+
+<body>
+    <main role="main">
+        <div class="header-controls">
+            <div class="theme-toggle">
+                <button onclick="toggleTheme()" aria-label="Basculer le mode sombre">🌙</button>
+            </div>
+            <div class="history-toggle">
+                <button onclick="toggleHistory()" aria-label="Afficher l'historique">
+                    <i class="fas fa-history"></i>
+                </button>
+            </div>
+        </div>
+
+        <h1 id="page-title">Météo par Code Postal</h1>
+
+        <form aria-labelledby="page-title" onsubmit="event.preventDefault(); getWeather();" role="search">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="zipcode">Code postal :</label>
+                    <input type="text" id="zipcode" name="zipcode" required aria-required="true" pattern="[0-9]{5}" 
+                           inputmode="numeric" aria-describedby="zipcode-help" />
+                    <small id="zipcode-help">Entrez un code postal français à 5 chiffres (ex : 14000).</small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group days-selection">
+                    <label id="days-label">Nombre de jours de prévisions :</label>
+                    <div class="days-buttons" role="radiogroup" aria-labelledby="days-label">
+                        <button type="button" class="day-btn active" data-days="1" onclick="selectDays(this, 1)" 
+                                role="radio" aria-checked="true">1</button>
+                        <button type="button" class="day-btn" data-days="2" onclick="selectDays(this, 2)" 
+                                role="radio" aria-checked="false">2</button>
+                        <button type="button" class="day-btn" data-days="3" onclick="selectDays(this, 3)" 
+                                role="radio" aria-checked="false">3</button>
+                        <button type="button" class="day-btn" data-days="4" onclick="selectDays(this, 4)" 
+                                role="radio" aria-checked="false">4</button>
+                        <button type="button" class="day-btn" data-days="5" onclick="selectDays(this, 5)" 
+                                role="radio" aria-checked="false">5</button>
+                        <button type="button" class="day-btn" data-days="6" onclick="selectDays(this, 6)" 
+                                role="radio" aria-checked="false">6</button>
+                        <button type="button" class="day-btn" data-days="7" onclick="selectDays(this, 7)" 
+                                role="radio" aria-checked="false">7</button>
+                    </div>
+                    <input type="hidden" id="days-count" name="days-count" value="1">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <fieldset class="additional-info">
+                    <legend>Informations supplémentaires :</legend>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="show-lat" name="show-lat">
+                            <label for="show-lat">Latitude décimale</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="show-lng" name="show-lng">
+                            <label for="show-lng">Longitude décimale</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="show-rain" name="show-rain">
+                            <label for="show-rain">Cumul de pluie (mm)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="show-wind" name="show-wind">
+                            <label for="show-wind">Vent moyen (km/h)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="show-wind-dir" name="show-wind-dir">
+                            <label for="show-wind-dir">Direction du vent (°)</label>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="form-action">
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-search"></i> Obtenir la météo
+                </button>
+            </div>
+        </form>
+
+        <div class="result-container">
+            <section id="map-container" class="map-container" style="display: none;" aria-label="Carte de localisation">
+                <div id="map" class="map"></div>
+            </section>
+            
+            <section id="result" class="result" aria-live="polite"></section>
+        </div>
+
+        <section id="history-panel" class="history-panel">
+            <div class="history-header">
+                <h2>Historique des recherches</h2>
+                <button onclick="clearHistory()" aria-label="Effacer l'historique">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            <div id="history-list" class="history-list"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 - Application Météo par Code Postal</p>
+        <p>Données météorologiques fournies par <a href="https://meteo-concept.com/" target="_blank" rel="noopener">Météo Concept</a></p>
+    </footer>
+</body>
+
+</html>
