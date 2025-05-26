@@ -25,10 +25,9 @@ function toggleTheme() {
     // Mettre à jour l'icône après le changement de thème
     updateThemeIcon();
     
-    // Mettre à jour la carte si elle est visible
+    // Mettre à jour la carte si elle est visible (mais elle reste en mode clair)
     if (map) {
         setTimeout(() => {
-            updateMapTiles();
             map.invalidateSize();
         }, 300);
     }
@@ -288,27 +287,19 @@ async function getWeather() {
     }
 }
 
-// Mettre à jour les tuiles de la carte en fonction du thème
+// Mettre à jour les tuiles de la carte (toujours en mode clair)
 function updateMapTiles() {
     if (!map) return;
-    
-    const isDarkMode = document.documentElement.getAttribute("data-theme") === "dark";
     
     // Supprimer l'ancien TileLayer s'il existe
     if (currentTileLayer) {
         map.removeLayer(currentTileLayer);
     }
     
-    // Ajouter la nouvelle TileLayer selon le thème
-    if (isDarkMode) {
-        currentTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        });
-    } else {
-        currentTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        });
-    }
+    // Toujours utiliser les tuiles en mode clair
+    currentTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    });
     
     currentTileLayer.addTo(map);
 }
