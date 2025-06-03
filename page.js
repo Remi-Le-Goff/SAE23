@@ -73,7 +73,10 @@ function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString('fr-FR', options);
 }
 
-function getWeatherIcon(weatherCode) {
+function getWeatherIcon(weatherCode, avgTemp) {
+    // Codes météo liés à la neige
+    const snowCodes = [14, 15, 16, 21, 43, 44, 60, 61, 62, 63, 64, 65, 66, 67, 68, 73, 75, 76];
+    
     // Correspondance entre les codes météo et les icônes
     const weatherIcons = {
         0: "fas fa-sun", // Soleil
@@ -133,6 +136,11 @@ function getWeatherIcon(weatherCode) {
         // Par défaut
         default: "fas fa-cloud"
     };
+
+    // Si c'est un code neige mais que la température est > 1°C, afficher de la pluie à la place
+    if (snowCodes.includes(weatherCode) && avgTemp > 1) {
+        return "fas fa-cloud-rain";
+    }
 
     return weatherIcons[weatherCode] || weatherIcons.default;
 }
